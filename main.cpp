@@ -374,10 +374,10 @@ void Kitchen::fillCoffeeTank()
  with 2 member functions
  */
 
-struct Room
+struct House
 {
-    Room();
-    ~Room();
+    House();
+    ~House();
 
     Kitchen kitchen;
     Amplifier radio;
@@ -386,17 +386,17 @@ struct Room
     void removeFromTable(bool isOnTable);
 };
 
-Room::Room()
+House::House()
 {
-    std::cout << "Kitchen room object constructed!" << '\n';
+    std::cout << "House object constructed!" << '\n';
 }
 
-Room::~Room()
+House::~House()
 {
-    std::cout << "Kitchen room object destructed!" << '\n';
+    std::cout << "House object destructed!" << '\n';
 }
 
-bool Room::putRadioOnTableAndSwitchOn()
+bool House::putRadioOnTableAndSwitchOn()
 {
     this->kitchen.tableIsOccupied = true;    
     if(this->radio.switchOn() && this->kitchen.tableIsOccupied)
@@ -407,9 +407,10 @@ bool Room::putRadioOnTableAndSwitchOn()
     return false;
 }
 
-void Room::removeFromTable(bool onTable)
+void House::removeFromTable(bool onTable)
 {
-    if(onTable) this->kitchen.tableIsOccupied = false;
+    if(onTable) 
+        this->kitchen.tableIsOccupied = false;
 
     std::cout << "Object removed from table" << '\n';
 }
@@ -469,9 +470,9 @@ int main()
     k.makeCappucino();
     k.fillCoffeeTank();
 
-    Room kr;
-    bool onTable = kr.putRadioOnTableAndSwitchOn();
-    kr.removeFromTable(onTable);
+    House h;
+    bool onTable = h.putRadioOnTableAndSwitchOn();
+    h.removeFromTable(onTable);
     
     std::cout << "good to go!" << std::endl;
 }
