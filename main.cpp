@@ -98,6 +98,8 @@ struct CoffeeMachine
     void makeCoffee(int airPressure, float crushedBeans); 
     void heatUp(int minutes);
 
+    void printMemberData();
+
 };
 
 CoffeeMachine::CoffeeMachine() : tankVolume(1.45), airPressure(5)
@@ -134,6 +136,11 @@ void CoffeeMachine::heatUp(int min)
     {
         std::cout << "CoffeeMachine ready in " << i << " minutes" << '\n'; 
     }
+}
+
+void CoffeeMachine::printMemberData()
+{
+    std::cout << "crushPower: " << this->crushPower << "\nmilkTankVolume: " << this->milkTankVolume << '\n';  
 }
 
 /*
@@ -175,6 +182,8 @@ struct Fridge
     double streamWater(double waterTankVolume);
     unsigned int adjustTemperature(Door door); 
     bool openDoor(Door door, int angle);
+
+    void printMemberData();
 }; 
 
 Fridge::Fridge() : waterTankVolume(1.0), amountOfIce(2), height(220.5f)
@@ -245,6 +254,11 @@ bool Fridge::openDoor(Door door, int angle = 45)
     return true;
 }
 
+void Fridge::printMemberData()
+{
+    std::cout << "temperature: " << this->temperature << "\nemittedHeat: " << this->emittedHeat << '\n';  
+}
+
 /*
  copied UDT 3:
  */
@@ -281,6 +295,8 @@ struct Amplifier
     bool switchOn(); 
     bool changeInp(char inputType); 
     void ejectCd(int time);
+
+    void showIoCounts();
 }; 
 
 Amplifier::Amplifier() : inputs(8), wattage(45), maxVolume(10.0)
@@ -350,6 +366,11 @@ void Amplifier::ejectCd(int time)
     std::cout << "Ejecting CD took " << i << " seconds" << '\n';
 }
 
+void Amplifier::showIoCounts()
+{
+    std::cout << "inputs:" << this->inputs << "\noutputs" << this->outputs << "\n";  
+}
+
 /*
  new UDT 4:
  with 2 member functions
@@ -367,6 +388,7 @@ struct Kitchen
     void makeCappucino();
     void fillCoffeeTank();
 
+    void printObjectMemberInfos();
 };
 
 Kitchen::Kitchen() 
@@ -400,6 +422,13 @@ void Kitchen::fillCoffeeTank()
     std::cout << "Coffee tank filled with water!" << '\n';
 }
 
+void Kitchen::printObjectMemberInfos()
+{
+    this->fridge.printMemberData();
+    this->machine.printMemberData();
+    
+}
+
 
 /*
  new UDT 5:
@@ -416,6 +445,8 @@ struct House
 
     bool putRadioOnTableAndSwitchOn();
     void removeFromTable(bool isOnTable);
+
+    void printMemberInfos();
 };
 
 House::House()
@@ -447,6 +478,12 @@ void House::removeFromTable(bool onTable)
     std::cout << "Object removed from table" << '\n';
 }
 
+void House::printMemberInfos()
+{
+    this->kitchen.fridge.printMemberData();
+    std::cout << "wattage "<< this->radio.wattage << "\nmaxVolume " << this->radio.maxVolume << '\n';
+}
+
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
@@ -470,6 +507,9 @@ int main()
     coffeeMachine.makeCoffee(5, beans);
     coffeeMachine.heatUp(15);
 
+    std::cout << "crushPower: " << coffeeMachine.crushPower << "\nmilkTankVolume: " << coffeeMachine.milkTankVolume << '\n';
+    coffeeMachine.printMemberData();
+
     Fridge::Door door;
     door.closeDoor();
     bool dispOn = door.switchOnDisplay(true);
@@ -482,6 +522,9 @@ int main()
     unsigned int temp = fridge.adjustTemperature(door);
     door.doorOpened = fridge.openDoor(door, 22);
     door.alert(door.doorOpened, door.alertTime);
+
+    std::cout << "temperature: " << fridge.temperature << "\nemittedHeat: " << fridge.emittedHeat << '\n';
+    fridge.printMemberData();
 
     std::cout << "Fridge volume is " << vol << " and temperature is " << temp << '\n'; 
 
@@ -496,15 +539,24 @@ int main()
     bool inType = amp.changeInp('B');
     amp.ejectCd(7);
 
+    std::cout << "inputs:" << amp.inputs << "\noutputs" << amp.outputs << "\n";
+    amp.showIoCounts();
+
     std::cout << "Amp is " << (ampOn ? "on" : "off") << " and Input" << (inType ? " is active!" : " is not active") << '\n';
 
     Kitchen k;
     k.makeCappucino();
     k.fillCoffeeTank();
+    k.printObjectMemberInfos();
 
+    std::cout << "temperature: " << k.fridge.temperature << "\nemittedHeat: " << k.fridge.emittedHeat << '\n' << "crushPower: " << k.machine.crushPower << "\nmilkTankVolume: " << k.machine.milkTankVolume << '\n';    
+    
     House h;
     bool onTable = h.putRadioOnTableAndSwitchOn();
     h.removeFromTable(onTable);
+    h.printMemberInfos();
+
+    std::cout << "temperature: " << h.kitchen.fridge.temperature << "\nemittedHeat: " << h.kitchen.fridge.emittedHeat << "\nwattage: " << h.radio.wattage << "\nmaxVolume: " << h.radio.maxVolume << '\n';
     
     std::cout << "good to go!" << std::endl;
 }
