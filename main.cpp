@@ -118,7 +118,7 @@ CoffeeMachine::~CoffeeMachine()
     std::cout << "CoffeeMachine Object destruceted!" << '\n';
 }
 
-void CoffeeMachine::foamMilk(const int airPre)
+void CoffeeMachine::foamMilk(const int airPre) FIXME: function should be marked 'const'
 {
     std::cout << "Milk foamed with " << airPre << "bars" << '\n';  
 }
@@ -131,12 +131,12 @@ float CoffeeMachine::crushBeans() const
     return 10.0f;
 }
 
-void CoffeeMachine::makeCoffee(const int airPres,const float crushedBeans)
+void CoffeeMachine::makeCoffee(const int airPres,const float crushedBeans) FIXME: function should be marked 'const'
 {
     std::cout << "Beans: " << crushedBeans << " crushed with " << airPres << " bars !" << '\n'; 
 }
 
-void CoffeeMachine::heatUp(const int min)
+void CoffeeMachine::heatUp(const int min) FIXME: function should be marked 'const'
 {
     for(auto i = min; i >= 0; --i)
     {
@@ -227,12 +227,12 @@ void Fridge::Door::closeDoor() const
     std::cout << "Door Closed!" << '\n';
 }
 
-bool Fridge::Door::switchOnDisplay(const bool touched)
+bool Fridge::Door::switchOnDisplay(const bool touched) FIXME: function should be marked 'const'
 {
     return touched ? true : false;
 }
 
-void Fridge::Door::alert(const bool open,const int time)
+void Fridge::Door::alert(const bool open,const int time) FIXME: function should be marked 'const'
 {
     auto i = 0;
 
@@ -247,12 +247,12 @@ void Fridge::Door::alert(const bool open,const int time)
     }
 }
 
-void Fridge::crushIce(const unsigned int ice)
+void Fridge::crushIce(const unsigned int ice) FIXME: function should be marked 'const'
 {
     std::cout << ice << "Ice cubes crushed! " << '\n';
 }
 
-double Fridge::streamWater(const double tankVolume)
+double Fridge::streamWater(const double tankVolume) FIXME: function should be marked 'const'
 {
     return (tankVolume - 1.0);
 }
@@ -262,7 +262,7 @@ unsigned int Fridge::adjustTemperature(Door door) const
     return (door.switchOnDisplay(true)) ? true : false;
 }
 
-bool Fridge::openDoor(Door& door, const int angle = 45)
+bool Fridge::openDoor(Door& door, const int angle = 45) FIXME: function should be marked 'const'
 {
     for(auto i = 0; i <= angle; ++i)
     {
@@ -348,22 +348,22 @@ Amplifier::Preamp::Preamp() : thdNoise(0.0001f), voltage(12)
     std::cout << "Preamp created!" << '\n';
 }
 
-void Amplifier::Preamp::increaseAmplification(const float ampFac)
+void Amplifier::Preamp::increaseAmplification(const float ampFac) FIXME: function should be marked 'const'
 {
     std::cout << "Factor set: " << ampFac << '\n';
 }
 
-void Amplifier::Preamp::switchOutResistance(const unsigned int outR)
+void Amplifier::Preamp::switchOutResistance(const unsigned int outR) FIXME: function should be marked 'const'
 {
     std::cout << "Output Resistance set: " << outR<< '\n';
 }
 
-void Amplifier::Preamp::switchInResistance(const unsigned int inR)
+void Amplifier::Preamp::switchInResistance(const unsigned int inR) FIXME: function should be marked 'const'
 {
     std::cout << "Input Resistance set: " << inR<< '\n';
 }
 
-void Amplifier::adjustVolume(Preamp& pre)
+void Amplifier::adjustVolume(Preamp& pre) FIXME: function should be marked 'const'
 {
     pre.increaseAmplification(5);
 }
@@ -373,7 +373,7 @@ bool Amplifier::switchOn() const
     return true;
 }
 
-bool Amplifier::changeInp(const char type)
+bool Amplifier::changeInp(const char type) FIXME: function should be marked 'const'
 {
     switch(type) 
     {
@@ -390,7 +390,7 @@ bool Amplifier::changeInp(const char type)
     return (type == ('A' | 'B') ? true : false);
 }
 
-void Amplifier::ejectCd(int time)
+void Amplifier::ejectCd(int time) FIXME: function should be marked 'const'
 {
     auto i {0};
     while(i != time)
@@ -449,7 +449,7 @@ Kitchen::~Kitchen()
     std::cout << "Kitchen Object destructed!" << '\n';
 }
 
-void Kitchen::makeCappucino() 
+void Kitchen::makeCappucino()  FIXME: check if function can be marked 'const'
 {
     bool opened = this->fridge.openDoor(this->fridge.door1, 45);
 
@@ -463,7 +463,7 @@ void Kitchen::makeCappucino()
     std::cout << "Done, making cappucino!" << '\n';
 }
 
-void Kitchen::fillCoffeeTank()
+void Kitchen::fillCoffeeTank()  FIXME: check if function can be marked 'const'
 {
     this->machine.tankVolume = fridge.streamWater(this->fridge.waterTankVolume);
 
