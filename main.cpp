@@ -98,10 +98,10 @@ struct CoffeeMachine
     double milkTankVolume {1.0};
     unsigned int crushPower {5};
 
-    void foamMilk(const int airPressure);
+    void foamMilk(const int airPressure) const;
     float crushBeans() const; 
-    void makeCoffee(const int airPressure,const float crushedBeans); 
-    void heatUp(const int minutes);
+    void makeCoffee(const int airPressure, const float crushedBeans) const; 
+    void heatUp(const int minutes) const;
 
     void printMemberData() const;
 
@@ -118,7 +118,7 @@ CoffeeMachine::~CoffeeMachine()
     std::cout << "CoffeeMachine Object destruceted!" << '\n';
 }
 
-void CoffeeMachine::foamMilk(const int airPre) FIXME: function should be marked 'const'
+void CoffeeMachine::foamMilk(const int airPre) const 
 {
     std::cout << "Milk foamed with " << airPre << "bars" << '\n';  
 }
@@ -131,12 +131,12 @@ float CoffeeMachine::crushBeans() const
     return 10.0f;
 }
 
-void CoffeeMachine::makeCoffee(const int airPres,const float crushedBeans) FIXME: function should be marked 'const'
+void CoffeeMachine::makeCoffee(const int airPres, const float crushedBeans) const 
 {
     std::cout << "Beans: " << crushedBeans << " crushed with " << airPres << " bars !" << '\n'; 
 }
 
-void CoffeeMachine::heatUp(const int min) FIXME: function should be marked 'const'
+void CoffeeMachine::heatUp(const int min) const
 {
     for(auto i = min; i >= 0; --i)
     {
@@ -189,18 +189,18 @@ struct Fridge
         std::string typeOfDoor = "WithDisplay"; 
 
         void closeDoor() const;
-        bool switchOnDisplay(const bool displayTouched); 
-        void alert(const bool, const int);
+        bool switchOnDisplay(const bool displayTouched) const; 
+        void alert(const bool, const int) const;
 
         JUCE_LEAK_DETECTOR(Door)
     };
 
     Door door1;
 
-    void crushIce(const unsigned int amountOfIce);
-    double streamWater(const double waterTankVolume);
-    unsigned int adjustTemperature(Door door) const; 
-    bool openDoor(Door& door, const int angle);
+    void crushIce(const unsigned int amountOfIce) const;
+    double streamWater(const double waterTankVolume) const;
+    unsigned int adjustTemperature(Door& door) const; 
+    bool openDoor(Door& door, const int angle) const;
 
     void printMemberData() const;
 
@@ -227,12 +227,12 @@ void Fridge::Door::closeDoor() const
     std::cout << "Door Closed!" << '\n';
 }
 
-bool Fridge::Door::switchOnDisplay(const bool touched) FIXME: function should be marked 'const'
+bool Fridge::Door::switchOnDisplay(const bool touched) const
 {
     return touched ? true : false;
 }
 
-void Fridge::Door::alert(const bool open,const int time) FIXME: function should be marked 'const'
+void Fridge::Door::alert(const bool open,const int time) const 
 {
     auto i = 0;
 
@@ -247,22 +247,22 @@ void Fridge::Door::alert(const bool open,const int time) FIXME: function should 
     }
 }
 
-void Fridge::crushIce(const unsigned int ice) FIXME: function should be marked 'const'
+void Fridge::crushIce(const unsigned int ice) const
 {
     std::cout << ice << "Ice cubes crushed! " << '\n';
 }
 
-double Fridge::streamWater(const double tankVolume) FIXME: function should be marked 'const'
+double Fridge::streamWater(const double tankVolume) const
 {
     return (tankVolume - 1.0);
 }
 
-unsigned int Fridge::adjustTemperature(Door door) const 
+unsigned int Fridge::adjustTemperature(Door& door) const 
 {
     return (door.switchOnDisplay(true)) ? true : false;
 }
 
-bool Fridge::openDoor(Door& door, const int angle = 45) FIXME: function should be marked 'const'
+bool Fridge::openDoor(Door& door, const int angle = 45) const
 {
     for(auto i = 0; i <= angle; ++i)
     {
@@ -314,19 +314,19 @@ struct Amplifier
         float thdNoise;
         float voltage;
 
-        void increaseAmplification(const float ampFactor);
-        void switchOutResistance(const unsigned int outRes);
-        void switchInResistance(const unsigned int inRes);
+        void increaseAmplification(const float ampFactor) const;
+        void switchOutResistance(const unsigned int outRes) const;
+        void switchInResistance(const unsigned int inRes) const;
 
         JUCE_LEAK_DETECTOR(Preamp)
     };
 
     Preamp preA;
 
-    void adjustVolume(Preamp& pre);
+    void adjustVolume(Preamp& pre) const;
     bool switchOn() const ; 
-    bool changeInp(const char inputType); 
-    void ejectCd(const int time);
+    bool changeInp(const char inputType) const; 
+    void ejectCd(const int time) const;
 
     void showIoCounts() const ;
 
@@ -348,22 +348,22 @@ Amplifier::Preamp::Preamp() : thdNoise(0.0001f), voltage(12)
     std::cout << "Preamp created!" << '\n';
 }
 
-void Amplifier::Preamp::increaseAmplification(const float ampFac) FIXME: function should be marked 'const'
+void Amplifier::Preamp::increaseAmplification(const float ampFac) const
 {
     std::cout << "Factor set: " << ampFac << '\n';
 }
 
-void Amplifier::Preamp::switchOutResistance(const unsigned int outR) FIXME: function should be marked 'const'
+void Amplifier::Preamp::switchOutResistance(const unsigned int outR) const
 {
     std::cout << "Output Resistance set: " << outR<< '\n';
 }
 
-void Amplifier::Preamp::switchInResistance(const unsigned int inR) FIXME: function should be marked 'const'
+void Amplifier::Preamp::switchInResistance(const unsigned int inR) const
 {
-    std::cout << "Input Resistance set: " << inR<< '\n';
+    std::cout << "Input Resistance set: " << inR << '\n';
 }
 
-void Amplifier::adjustVolume(Preamp& pre) FIXME: function should be marked 'const'
+void Amplifier::adjustVolume(Preamp& pre) const
 {
     pre.increaseAmplification(5);
 }
@@ -373,7 +373,7 @@ bool Amplifier::switchOn() const
     return true;
 }
 
-bool Amplifier::changeInp(const char type) FIXME: function should be marked 'const'
+bool Amplifier::changeInp(const char type) const
 {
     switch(type) 
     {
@@ -390,7 +390,7 @@ bool Amplifier::changeInp(const char type) FIXME: function should be marked 'con
     return (type == ('A' | 'B') ? true : false);
 }
 
-void Amplifier::ejectCd(int time) FIXME: function should be marked 'const'
+void Amplifier::ejectCd(const int time) const
 {
     auto i {0};
     while(i != time)
@@ -434,7 +434,7 @@ struct Kitchen
     void makeCappucino();
     void fillCoffeeTank();
 
-    void printObjectMemberInfos() const ;
+    void printObjectMemberInfos() const;
 
     JUCE_LEAK_DETECTOR(Kitchen)
 };
@@ -449,7 +449,8 @@ Kitchen::~Kitchen()
     std::cout << "Kitchen Object destructed!" << '\n';
 }
 
-void Kitchen::makeCappucino()  FIXME: check if function can be marked 'const'
+void Kitchen::makeCappucino() // const does not work here: "binding value of type 'const Fridge::Door' to reference to type 'Fridge::Door' drops 'const' qualifier"
+
 {
     bool opened = this->fridge.openDoor(this->fridge.door1, 45);
 
@@ -463,7 +464,8 @@ void Kitchen::makeCappucino()  FIXME: check if function can be marked 'const'
     std::cout << "Done, making cappucino!" << '\n';
 }
 
-void Kitchen::fillCoffeeTank()  FIXME: check if function can be marked 'const'
+void Kitchen::fillCoffeeTank() // const does not work here: "cannot assign to non-static data member within const member function 'fillCoffeeTank'""
+
 {
     this->machine.tankVolume = fridge.streamWater(this->fridge.waterTankVolume);
 
@@ -503,7 +505,7 @@ struct House
     Amplifier radio;
 
     bool putRadioOnTableAndSwitchOn();
-    void removeFromTable(bool isOnTable);
+    void removeFromTable(const bool isOnTable);
 
     void printMemberInfos() const ;
 
@@ -531,7 +533,7 @@ bool House::putRadioOnTableAndSwitchOn()
     return false;
 }
 
-void House::removeFromTable(bool onTable)
+void House::removeFromTable(const bool onTable)
 {
     if(onTable) 
         this->kitchen.tableIsOccupied = false;
