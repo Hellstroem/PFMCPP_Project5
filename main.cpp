@@ -81,6 +81,7 @@ void Axe::aConstMemberFunction() const { }
 
 
 #include <iostream>
+#include "LeakedObjectDetector.h"
 
 /*
  copied UDT 1:
@@ -97,13 +98,14 @@ struct CoffeeMachine
     double milkTankVolume {1.0};
     unsigned int crushPower {5};
 
-    void foamMilk(int airPressure);
-    float crushBeans(); 
-    void makeCoffee(int airPressure, float crushedBeans); 
-    void heatUp(int minutes);
+    void foamMilk(const int airPressure) const;
+    float crushBeans() const; 
+    void makeCoffee(const int airPressure, const float crushedBeans) const; 
+    void heatUp(const int minutes) const;
 
-    void printMemberData();
+    void printMemberData() const;
 
+    JUCE_LEAK_DETECTOR(CoffeeMachine)
 };
 
 CoffeeMachine::CoffeeMachine() : tankVolume(1.45), airPressure(5)
@@ -116,12 +118,12 @@ CoffeeMachine::~CoffeeMachine()
     std::cout << "CoffeeMachine Object destruceted!" << '\n';
 }
 
-void CoffeeMachine::foamMilk(int airPre)
+void CoffeeMachine::foamMilk(const int airPre) const 
 {
     std::cout << "Milk foamed with " << airPre << "bars" << '\n';  
 }
 
-float CoffeeMachine::crushBeans()
+float CoffeeMachine::crushBeans() const
 {
     std::string crushed = "CRUSHED!";
     std::cout << crushed << '\n';  
@@ -129,12 +131,12 @@ float CoffeeMachine::crushBeans()
     return 10.0f;
 }
 
-void CoffeeMachine::makeCoffee(int airPres, float crushedBeans)
+void CoffeeMachine::makeCoffee(const int airPres, const float crushedBeans) const 
 {
     std::cout << "Beans: " << crushedBeans << " crushed with " << airPres << " bars !" << '\n'; 
 }
 
-void CoffeeMachine::heatUp(int min)
+void CoffeeMachine::heatUp(const int min) const
 {
     for(auto i = min; i >= 0; --i)
     {
@@ -142,11 +144,22 @@ void CoffeeMachine::heatUp(int min)
     }
 }
 
-void CoffeeMachine::printMemberData()
+void CoffeeMachine::printMemberData() const
 {
     std::cout << "crushPower: " << this->crushPower << "\nmilkTankVolume: " << this->milkTankVolume << '\n';  
 }
 
+struct CoffeeMachineWrapper
+{
+    CoffeeMachineWrapper(CoffeeMachine* ptr) : coffPtr(ptr) {}
+    ~CoffeeMachineWrapper()
+    {
+        delete coffPtr;
+    }
+
+    CoffeeMachine* coffPtr = nullptr;
+
+};
 /*
  copied UDT 2:
  */
@@ -175,19 +188,23 @@ struct Fridge
         std::string typeOfDoorHandle = "integrated";
         std::string typeOfDoor = "WithDisplay"; 
 
-        void closeDoor();
-        bool switchOnDisplay(bool displayTouched); 
-        void alert(bool, int);
+        void closeDoor() const;
+        bool switchOnDisplay(const bool displayTouched) const; 
+        void alert(const bool, const int) const;
+
+        JUCE_LEAK_DETECTOR(Door)
     };
 
     Door door1;
 
-    void crushIce(unsigned int amountOfIce);
-    double streamWater(double waterTankVolume);
-    unsigned int adjustTemperature(Door door); 
-    bool openDoor(Door door, int angle);
+    void crushIce(const unsigned int amountOfIce) const;
+    double streamWater(const double waterTankVolume) const;
+    unsigned int adjustTemperature(Door& door) const; 
+    bool openDoor(Door& door, const int angle) const;
 
-    void printMemberData();
+    void printMemberData() const;
+
+    JUCE_LEAK_DETECTOR(Fridge)
 }; 
 
 Fridge::Fridge() : waterTankVolume(1.0), amountOfIce(2), height(220.5f)
@@ -205,17 +222,17 @@ Fridge::Door::Door() : depth(12.3f), angle(0)
     std::cout << "Door created!" << '\n';
 }
 
-void Fridge::Door::closeDoor()
+void Fridge::Door::closeDoor() const
 {
     std::cout << "Door Closed!" << '\n';
 }
 
-bool Fridge::Door::switchOnDisplay(bool touched)
+bool Fridge::Door::switchOnDisplay(const bool touched) const
 {
     return touched ? true : false;
 }
 
-void Fridge::Door::alert(bool open, int time)
+void Fridge::Door::alert(const bool open,const int time) const 
 {
     auto i = 0;
 
@@ -230,24 +247,22 @@ void Fridge::Door::alert(bool open, int time)
     }
 }
 
-void Fridge::crushIce(unsigned int ice)
+void Fridge::crushIce(const unsigned int ice) const
 {
     std::cout << ice << "Ice cubes crushed! " << '\n';
 }
 
-double Fridge::streamWater(double tankVolume)
+double Fridge::streamWater(const double tankVolume) const
 {
     return (tankVolume - 1.0);
 }
 
-unsigned int Fridge::adjustTemperature(Door door)
+unsigned int Fridge::adjustTemperature(Door& door) const 
 {
-    bool switchedOn = door.switchOnDisplay(true);
-
-    return switchedOn ? true : false;
+    return (door.switchOnDisplay(true)) ? true : false;
 }
 
-bool Fridge::openDoor(Door door, int angle = 45)
+bool Fridge::openDoor(Door& door, const int angle = 45) const
 {
     for(auto i = 0; i <= angle; ++i)
     {
@@ -258,10 +273,21 @@ bool Fridge::openDoor(Door door, int angle = 45)
     return true;
 }
 
-void Fridge::printMemberData()
+void Fridge::printMemberData() const 
 {
     std::cout << "temperature: " << this->temperature << "\nemittedHeat: " << this->emittedHeat << '\n';  
 }
+
+struct FridgeWrapper
+{
+    FridgeWrapper(Fridge* ptr) : fridgePtr(ptr) {}
+    ~FridgeWrapper()
+    {
+        delete fridgePtr;
+    }
+
+    Fridge* fridgePtr = nullptr;
+};
 
 /*
  copied UDT 3:
@@ -288,19 +314,23 @@ struct Amplifier
         float thdNoise;
         float voltage;
 
-        void increaseAmplification(float ampFactor);
-        void switchOutResistance(unsigned int outRes);
-        void switchInResistance(unsigned int inRes);
+        void increaseAmplification(const float ampFactor) const;
+        void switchOutResistance(const unsigned int outRes) const;
+        void switchInResistance(const unsigned int inRes) const;
+
+        JUCE_LEAK_DETECTOR(Preamp)
     };
 
     Preamp preA;
 
-    void adjustVolume(Preamp pre);
-    bool switchOn(); 
-    bool changeInp(char inputType); 
-    void ejectCd(int time);
+    void adjustVolume(Preamp& pre) const;
+    bool switchOn() const ; 
+    bool changeInp(const char inputType) const; 
+    void ejectCd(const int time) const;
 
-    void showIoCounts();
+    void showIoCounts() const ;
+
+    JUCE_LEAK_DETECTOR(Amplifier)
 }; 
 
 Amplifier::Amplifier() : inputs(8), wattage(45), maxVolume(10.0)
@@ -318,32 +348,32 @@ Amplifier::Preamp::Preamp() : thdNoise(0.0001f), voltage(12)
     std::cout << "Preamp created!" << '\n';
 }
 
-void Amplifier::Preamp::increaseAmplification(float ampFac)
+void Amplifier::Preamp::increaseAmplification(const float ampFac) const
 {
     std::cout << "Factor set: " << ampFac << '\n';
 }
 
-void Amplifier::Preamp::switchOutResistance(unsigned int outR)
+void Amplifier::Preamp::switchOutResistance(const unsigned int outR) const
 {
     std::cout << "Output Resistance set: " << outR<< '\n';
 }
 
-void Amplifier::Preamp::switchInResistance(unsigned int inR)
+void Amplifier::Preamp::switchInResistance(const unsigned int inR) const
 {
-    std::cout << "Input Resistance set: " << inR<< '\n';
+    std::cout << "Input Resistance set: " << inR << '\n';
 }
 
-void Amplifier::adjustVolume(Preamp pre)
+void Amplifier::adjustVolume(Preamp& pre) const
 {
     pre.increaseAmplification(5);
 }
 
-bool Amplifier::switchOn()
+bool Amplifier::switchOn() const 
 {
     return true;
 }
 
-bool Amplifier::changeInp(char type)
+bool Amplifier::changeInp(const char type) const
 {
     switch(type) 
     {
@@ -360,7 +390,7 @@ bool Amplifier::changeInp(char type)
     return (type == ('A' | 'B') ? true : false);
 }
 
-void Amplifier::ejectCd(int time)
+void Amplifier::ejectCd(const int time) const
 {
     auto i {0};
     while(i != time)
@@ -370,10 +400,22 @@ void Amplifier::ejectCd(int time)
     std::cout << "Ejecting CD took " << i << " seconds" << '\n';
 }
 
-void Amplifier::showIoCounts()
+void Amplifier::showIoCounts() const 
 {
     std::cout << "inputs:" << this->inputs << "\noutputs" << this->outputs << "\n";  
 }
+
+struct AmpWrapper
+{
+    AmpWrapper(Amplifier* ptr) : ampPtr(ptr) {}
+    ~AmpWrapper()
+    {
+        delete ampPtr;
+    }
+
+    Amplifier* ampPtr = nullptr;
+
+};
 
 /*
  new UDT 4:
@@ -392,7 +434,9 @@ struct Kitchen
     void makeCappucino();
     void fillCoffeeTank();
 
-    void printObjectMemberInfos();
+    void printObjectMemberInfos() const;
+
+    JUCE_LEAK_DETECTOR(Kitchen)
 };
 
 Kitchen::Kitchen() 
@@ -405,7 +449,8 @@ Kitchen::~Kitchen()
     std::cout << "Kitchen Object destructed!" << '\n';
 }
 
-void Kitchen::makeCappucino()
+void Kitchen::makeCappucino() // const does not work here: "binding value of type 'const Fridge::Door' to reference to type 'Fridge::Door' drops 'const' qualifier"
+
 {
     bool opened = this->fridge.openDoor(this->fridge.door1, 45);
 
@@ -419,19 +464,31 @@ void Kitchen::makeCappucino()
     std::cout << "Done, making cappucino!" << '\n';
 }
 
-void Kitchen::fillCoffeeTank()
+void Kitchen::fillCoffeeTank() // const does not work here: "cannot assign to non-static data member within const member function 'fillCoffeeTank'""
+
 {
     this->machine.tankVolume = fridge.streamWater(this->fridge.waterTankVolume);
 
     std::cout << "Coffee tank filled with water!" << '\n';
 }
 
-void Kitchen::printObjectMemberInfos()
+void Kitchen::printObjectMemberInfos() const 
 {
     this->fridge.printMemberData();
     this->machine.printMemberData();
     
 }
+
+struct KitchenWrapper
+{
+    KitchenWrapper(Kitchen* ptr) : kitPtr(ptr) {}
+    ~KitchenWrapper()
+    {
+        delete kitPtr;
+    }
+
+    Kitchen* kitPtr = nullptr;
+};
 
 
 /*
@@ -448,9 +505,11 @@ struct House
     Amplifier radio;
 
     bool putRadioOnTableAndSwitchOn();
-    void removeFromTable(bool isOnTable);
+    void removeFromTable(const bool isOnTable);
 
-    void printMemberInfos();
+    void printMemberInfos() const ;
+
+    JUCE_LEAK_DETECTOR(House)
 };
 
 House::House()
@@ -474,7 +533,7 @@ bool House::putRadioOnTableAndSwitchOn()
     return false;
 }
 
-void House::removeFromTable(bool onTable)
+void House::removeFromTable(const bool onTable)
 {
     if(onTable) 
         this->kitchen.tableIsOccupied = false;
@@ -482,11 +541,22 @@ void House::removeFromTable(bool onTable)
     std::cout << "Object removed from table" << '\n';
 }
 
-void House::printMemberInfos()
+void House::printMemberInfos() const 
 {
     this->kitchen.fridge.printMemberData();
     std::cout << "wattage "<< this->radio.wattage << "\nmaxVolume " << this->radio.maxVolume << '\n';
 }
+
+struct HouseWrapper
+{
+    HouseWrapper(House* ptr) : housePtr(ptr) {}
+    ~HouseWrapper()
+    {
+        delete housePtr;
+    }
+
+    House* housePtr = nullptr;
+};
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
@@ -505,14 +575,14 @@ void House::printMemberInfos()
 #include <iostream>
 int main()
 {
-    CoffeeMachine coffeeMachine;
-    coffeeMachine.foamMilk(5);
-    float beans = coffeeMachine.crushBeans();
-    coffeeMachine.makeCoffee(5, beans);
-    coffeeMachine.heatUp(15);
+    CoffeeMachineWrapper cMW(new CoffeeMachine());
+    cMW.coffPtr->foamMilk(5);
+    float beans = cMW.coffPtr->crushBeans();
+    cMW.coffPtr->makeCoffee(5, beans);
+    cMW.coffPtr->heatUp(15);
 
-    std::cout << "crushPower: " << coffeeMachine.crushPower << "\nmilkTankVolume: " << coffeeMachine.milkTankVolume << '\n';
-    coffeeMachine.printMemberData();
+    std::cout << "crushPower: " << cMW.coffPtr->crushPower << "\nmilkTankVolume: " << cMW.coffPtr->milkTankVolume << '\n';
+    cMW.coffPtr->printMemberData();
 
     Fridge::Door door;
     door.closeDoor();
@@ -520,15 +590,15 @@ int main()
 
     std::cout << "Display is " <<  (dispOn ? "on" : "off") << '\n';
 
-    Fridge fridge;
-    fridge.crushIce(100);
-    double vol = fridge.streamWater(10);
-    unsigned int temp = fridge.adjustTemperature(door);
-    door.doorOpened = fridge.openDoor(door, 22);
+    FridgeWrapper fW(new Fridge());
+    fW.fridgePtr->crushIce(100);
+    double vol = fW.fridgePtr->streamWater(10);
+    unsigned int temp = fW.fridgePtr->adjustTemperature(door);
+    door.doorOpened = fW.fridgePtr->openDoor(door, 22);
     door.alert(door.doorOpened, door.alertTime);
 
-    std::cout << "temperature: " << fridge.temperature << "\nemittedHeat: " << fridge.emittedHeat << '\n';
-    fridge.printMemberData();
+    std::cout << "temperature: " << fW.fridgePtr->temperature << "\nemittedHeat: " << fW.fridgePtr->emittedHeat << '\n';
+    fW.fridgePtr->printMemberData();
 
     std::cout << "Fridge volume is " << vol << " and temperature is " << temp << '\n'; 
 
@@ -537,30 +607,30 @@ int main()
     pre.switchOutResistance(8);
     pre.switchInResistance(1000);
 
-    Amplifier amp;
-    amp.adjustVolume(pre);
-    bool ampOn = amp.switchOn();
-    bool inType = amp.changeInp('B');
-    amp.ejectCd(7);
+    AmpWrapper aW(new Amplifier());
+    aW.ampPtr->adjustVolume(pre);
+    bool ampOn = aW.ampPtr->switchOn();
+    bool inType = aW.ampPtr->changeInp('B');
+    aW.ampPtr->ejectCd(7);
 
-    std::cout << "inputs:" << amp.inputs << "\noutputs" << amp.outputs << "\n";
-    amp.showIoCounts();
+    std::cout << "inputs:" << aW.ampPtr->inputs << "\noutputs" << aW.ampPtr->outputs << "\n";
+    aW.ampPtr->showIoCounts();
 
     std::cout << "Amp is " << (ampOn ? "on" : "off") << " and Input" << (inType ? " is active!" : " is not active") << '\n';
 
-    Kitchen k;
-    k.makeCappucino();
-    k.fillCoffeeTank();
-    k.printObjectMemberInfos();
+    KitchenWrapper kW(new Kitchen());
+    kW.kitPtr->makeCappucino();
+    kW.kitPtr->fillCoffeeTank();
+    kW.kitPtr->printObjectMemberInfos();
 
-    std::cout << "temperature: " << k.fridge.temperature << "\nemittedHeat: " << k.fridge.emittedHeat << '\n' << "crushPower: " << k.machine.crushPower << "\nmilkTankVolume: " << k.machine.milkTankVolume << '\n';    
+    std::cout << "temperature: " << kW.kitPtr->fridge.temperature << "\nemittedHeat: " << kW.kitPtr->fridge.emittedHeat << '\n' << "crushPower: " << kW.kitPtr->machine.crushPower << "\nmilkTankVolume: " << kW.kitPtr->machine.milkTankVolume << '\n';    
     
-    House h;
-    bool onTable = h.putRadioOnTableAndSwitchOn();
-    h.removeFromTable(onTable);
-    h.printMemberInfos();
+    HouseWrapper hW(new House());
+    bool onTable = hW.housePtr->putRadioOnTableAndSwitchOn();
+    hW.housePtr->removeFromTable(onTable);
+    hW.housePtr->printMemberInfos();
 
-    std::cout << "temperature: " << h.kitchen.fridge.temperature << "\nemittedHeat: " << h.kitchen.fridge.emittedHeat << "\nwattage: " << h.radio.wattage << "\nmaxVolume: " << h.radio.maxVolume << '\n';
+    std::cout << "temperature: " << hW.housePtr->kitchen.fridge.temperature << "\nemittedHeat: " << hW.housePtr->kitchen.fridge.emittedHeat << "\nwattage: " << hW.housePtr->radio.wattage << "\nmaxVolume: " << hW.housePtr->radio.maxVolume << '\n';
     
     std::cout << "good to go!" << std::endl;
 }
