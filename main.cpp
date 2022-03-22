@@ -67,6 +67,11 @@ void Axe::aConstMemberFunction() const { }
 #include <iostream>
 #include "LeakedObjectDetector.h"
 #include "Wrappers.h"
+#include "CoffeeMachine.h"
+#include "Fridge.h"
+#include "Amplifier.h"
+#include "Kitchen.h"
+#include "House.h"
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
